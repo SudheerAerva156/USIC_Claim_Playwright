@@ -11,15 +11,18 @@ test.describe('Majesco Claims Live Smoke Test Suite', () => {
     Logger.info('Starting live Majesco E2E smoke test');
 
     // Dynamically navigate to the environment's base URL
-    await page.goto('/');
+    await page.goto('');
     
     // Dynamically retrieve credentials for Admin role
     const credentials = CredentialManager.getCredentials('Admin');
 
     Logger.info('Entering credentials dynamically');
-    await page.locator('#username').fill(credentials.username);
+    await page.locator('#username').click();
+    await page.locator('#username').pressSequentially(credentials.username, { delay: 50 });
     await page.locator('#username').press('Tab');
-    await page.locator('#password').fill(credentials.password);
+    await page.locator('#password').click();
+    await page.locator('#password').pressSequentially(credentials.password, { delay: 50 });
+    await page.locator('#password').press('Tab');
     await page.locator('input[type="submit"]').click();
     
     Logger.info('Closing initial modal overlays');

@@ -8,8 +8,8 @@ export class LoginPage extends BasePage {
    */
   public async login(username: string, password: string): Promise<void> {
     Logger.info(`Attempting login with username: '${username}'`);
-    await this.fill('login.usernameInput', username);
-    await this.fill('login.passwordInput', password);
+    await this.type('login.usernameInput', username);
+    await this.type('login.passwordInput', password);
     await this.click('login.loginButton');
   }
 

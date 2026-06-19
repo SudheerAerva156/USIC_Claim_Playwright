@@ -41,6 +41,18 @@ export class BasePage {
   }
 
   /**
+   * Types text into an input character-by-character (useful for Vaadin/GWT fields).
+   */
+  protected async type(path: string, value: string): Promise<void> {
+    const isSecret = path.toLowerCase().includes('password') || path.toLowerCase().includes('secret');
+    Logger.info(`Typing field: '${path}' with value: '${isSecret ? '********' : value}'`);
+    const locator = this.getLocator(path);
+    await locator.first().waitFor({ state: 'visible' });
+    await locator.first().click();
+    await locator.first().pressSequentially(value, { delay: 50 });
+  }
+
+  /**
    * Retrieves text content from an element.
    */
   public async getText(path: string): Promise<string> {
