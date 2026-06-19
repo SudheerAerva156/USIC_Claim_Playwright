@@ -33,7 +33,7 @@ export const CREDENTIALS_STORE: Record<string, Record<UserRole, UserCredentials>
     'Read Only User': { username: 'qa_readonly', password: 'QaPassword123!' }
   },
   QA2: {
-    Admin: { username: 'qa2_admin', password: 'Qa2Password123!' },
+    Admin: { username: 'admin', password: 'adm@usqc6' },
     Supervisor: { username: 'qa2_supervisor', password: 'Qa2Password123!' },
     Manager: { username: 'qa2_manager', password: 'Qa2Password123!' },
     Adjuster: { username: 'qa2_adjuster', password: 'Qa2Password123!' },
