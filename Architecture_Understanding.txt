@@ -1,0 +1,141 @@
+================================================================================
+USIC CLAIMS PLAYWRIGHT FRAMEWORK - ARCHITECTURE UNDERSTANDING
+================================================================================
+
+This document details the design patterns, architectural choices, and execution
+flows implemented in the USIC Claims Playwright automation framework.
+
+--------------------------------------------------------------------------------
+1. PROJECT STRUCTURE
+--------------------------------------------------------------------------------
+USIC_Claims_Playwright/
+├── .github/
+│   └── workflows/
+│       └── playwright.yml         # GitHub Actions CI Workflow
+├── Jenkinsfile                    # Jenkins CI/CD Pipeline
+├── config/
+│   ├── environments.config.ts     # Environment configuration setup
+│   └── credentials.config.ts      # Credentials management (roles mapping)
+├── locators/
+│   ├── login.json                 # Locators for login page
+│   ├── dashboard.json             # Locators for main dashboard page
+│   └── claims.json                # Locators for claims details page
+├── src/
+│   ├── pages/
+│   │   ├── BasePage.ts            # Base page class with common methods
+│   │   ├── LoginPage.ts           # Login page actions
+│   │   ├── DashboardPage.ts       # Dashboard page actions
+│   │   └── ClaimsPage.ts          # Claims page actions
+│   ├── utils/
+│   │   ├── EnvironmentManager.ts  # Handles target environment URLs
+│   │   ├── CredentialManager.ts   # Retrieves credentials based on role/env
+│   │   ├── LocatorManager.ts      # Reads and returns locators from JSON files
+│   │   ├── Logger.ts              # Custom logging utility
+│   │   ├── ScreenshotUtility.ts   # Manages screenshots, videos, and Allure attachments
+│   │   └── ApiUtility.ts          # Wrapper for API requests
+│   └── tests/
+│       ├── fixtures.ts            # Custom Playwright fixtures (page objects, logger)
+│       ├── login.spec.ts          # Authentication test suite
+│       ├── dashboard.spec.ts      # Dashboard navigation test suite
+│       └── claims.spec.ts         # Claims creation/upgradation test suite
+├── playwright.config.ts           # Playwright framework configuration
+├── package.json                   # Project dependencies and script runner
+├── tsconfig.json                  # TypeScript compiler settings
+├── README.md                      # General overview of project
+└── RUN_INSTRUCTIONS.txt           # Detailed guide on commands and test execution
+
+--------------------------------------------------------------------------------
+2. KEY ARCHITECTURAL PILLARS
+--------------------------------------------------------------------------------
+
+A. DECOUPLED LOCATOR REPOSITORY PATTERN
+   - Traditional automation frameworks hardcode CSS selectors or XPaths inside
+     Page Object classes. In this framework, all locators are separated into JSON 
+     files located under `/locators/` (e.g. login.json, claims.json).
+   - Benefits:
+     1. Non-technical users or manual testers can update selectors in simple JSON
+        without modifying or risking recompiling typescript code files.
+     2. Page Object classes are extremely clean and contain only action business logic.
+     3. Selectors are resolved at runtime via the `LocatorManager`.
+
+B. ENTERPRISE PAGE OBJECT MODEL (POM)
+   - Pages are modeled as classes under `src/pages/`.
+   - `BasePage.ts` provides safety wrappers around Playwright actions like `click`,
+     `fill`, `getText`, and `isVisible`. It performs automated waits, logs 
+     interactions, and resolves locators dynamically using the `LocatorManager`.
+   - Page Object classes (e.g., `LoginPage.ts`, `ClaimsPage.ts`) extend `BasePage`,
+     inheriting all core wrapper methods.
+
+C. DYNAMIC MULTI-ROLE & ENVIRONMENT STRATEGY
+   - Supported Environments: DEV, DEVAT, QA, QA2, CLOUDQA, UAT, QA_UPGRADE.
+   - Environment is controlled by the 'ENV' environment variable (e.g., ENV=QA).
+   - `EnvironmentManager` validates the variable and retrieves the correct base URL.
+   - Credentials for roles ('Admin', 'Supervisor', 'Manager', 'Adjuster', 'Claims 
+     Examiner', 'Read Only User') are mapped in `config/credentials.config.ts`.
+   - `CredentialManager` dynamically resolves credentials based on the current 
+     environment and specified role.
+   - Security: CredentialManager prioritizes OS environment variables (following
+     the pattern `[ENV]_[ROLE]_USERNAME`, e.g., `QA_UPGRADE_ADMIN_USERNAME`).
+     This avoids hardcoding production or staging credentials in git repositories.
+
+D. EXTENSIBLE PLAYWRIGHT FIXTURES
+   - Page Objects and API clients are instantiated dynamically using custom Playwright
+     fixtures in `src/tests/fixtures.ts`.
+   - In your test scripts, you do not need to manually write:
+     `const loginPage = new LoginPage(page);`
+     Instead, simply request it directly in the test arguments:
+     `test('My Test', async ({ loginPage, claimsPage }) => { ... })`
+   - Fixtures also implement `beforeEach` and `afterEach` hooks to automatically:
+     1. Inject Environment information into the Allure report context.
+     2. Write start/finish markers and status to `/logs/execution.log`.
+
+E. REUSABLE UTILITY SUITE
+   - `Logger`: Custom logging system writing formatted timelines to both console 
+     and `/logs/execution.log`.
+   - `ScreenshotUtility`: Custom class capturing screenshots on failure and attaching 
+     them to reports.
+   - `ApiUtility`: Helper wrapping Playwright's `APIRequestContext` to easily verify
+     API and backend communication.
+
+--------------------------------------------------------------------------------
+3. DATA FLOW DIAGRAM (EXECUTION PIPELINE)
+--------------------------------------------------------------------------------
+
++-------------+      Loads      +--------------------------+
+|  Test Spec  | --------------> |    custom fixtures.ts    |
++-------------+                 +--------------------------+
+       |                                      |
+       | Requests Page                        | Pre-instantiates with Page
+       v                                      v
++-------------+      Requests   +--------------------------+      Loads
+| LoginPage   | --------------> |        BasePage          | -----------> [LocatorManager]
++-------------+                 +--------------------------+                    |
+       |                                      |                                 | Resolves
+       | Resolves Credentials                 | Calls click/fill/getText        v
+       v                                      v                         +---------------+
+[CredentialManager]                      [Playwright Page] <----------- | locators/*.json|
+       |                                                                +---------------+
+       | Overrides/Reads
+       v
+[Process Env / Store]
+
+--------------------------------------------------------------------------------
+4. CI/CD INTEGRATION & REPORTING
+--------------------------------------------------------------------------------
+
+- GITHUB ACTIONS:
+  The workflow file `.github/workflows/playwright.yml` sets up a Node runner,
+  installs Playwright, executes tests based on workflow inputs (environment and grep 
+  tags), and generates Allure report artifacts.
+
+- JENKINS PIPELINE:
+  The `Jenkinsfile` provides a declarative build pipeline using parameters for Windows
+  executors. It installs node modules, runs the test suite, generates the Allure
+  report, and publishes HTML and Allure results back to the build screen.
+
+- ALLURE REPORTING:
+  The framework integrates `allure-playwright`. In addition to tracking steps and
+  hierarchical suites, the report automatically incorporates test run attachments
+  (screenshots, videos, and network traces) on failure and logs custom environment
+  variables.
+================================================================================

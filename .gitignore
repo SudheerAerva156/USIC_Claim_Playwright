@@ -1,0 +1,22 @@
+# Dependency directories
+node_modules/
+dist/
+
+# Test reports and results
+test-results/
+playwright-report/
+allure-results/
+allure-report/
+playwright/.cache/
+
+# Local execution logs
+logs/
+
+# Local configuration and credentials
+.env
+.env.local
+auth.json
+
+# System files
+.DS_Store
+Thumbs.db
