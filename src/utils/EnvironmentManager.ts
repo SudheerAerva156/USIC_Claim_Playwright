@@ -10,7 +10,7 @@ export class EnvironmentManager {
   public static getEnv(): string {
     const env = process.env.ENV;
     if (!env) {
-      return 'QA_UPGRADE';
+      return 'QA';
     }
     const upperEnv = env.toUpperCase();
     if (!this.ENV_URLS[upperEnv]) {

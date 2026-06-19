@@ -5,9 +5,9 @@ import { ENV_URLS } from './config/environments.config';
 // Load environment variables from a .env file if it exists
 dotenv.config();
 
-const environment = process.env.ENV || 'QA_UPGRADE';
+const environment = process.env.ENV || 'QA';
 
-const baseURL = ENV_URLS[environment] || ENV_URLS['QA_UPGRADE'];
+const baseURL = ENV_URLS[environment] || ENV_URLS['QA'];
 
 export default defineConfig({
   testDir: './src/tests',
