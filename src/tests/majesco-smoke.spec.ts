@@ -17,10 +17,10 @@ test.describe('Majesco Claims Live Smoke Test Suite', () => {
     const credentials = CredentialManager.getCredentials('Admin');
 
     Logger.info('Entering credentials dynamically');
-    await page.getByRole('textbox', { name: 'Username' }).fill(credentials.username);
-    await page.getByRole('textbox', { name: 'Username' }).press('Tab');
-    await page.getByRole('textbox', { name: 'Password' }).fill(credentials.password);
-    await page.getByRole('button', { name: 'Log in' }).click();
+    await page.locator('#username').fill(credentials.username);
+    await page.locator('#username').press('Tab');
+    await page.locator('#password').fill(credentials.password);
+    await page.locator('input[type="submit"]').click();
     
     Logger.info('Closing initial modal overlays');
     await page.getByRole('button', { name: 'Close' }).click();
