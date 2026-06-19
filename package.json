@@ -1,0 +1,34 @@
+{
+  "name": "usic-claims-playwright",
+  "version": "1.0.0",
+  "description": "Production-grade Playwright TypeScript automation framework for Claims Management",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf allure-results allure-report playwright-report test-results logs",
+    "pretest": "npm run clean",
+    "test": "playwright test",
+    "test:dev": "cross-env ENV=DEV playwright test",
+    "test:devat": "cross-env ENV=DEVAT playwright test",
+    "test:qa": "cross-env ENV=QA playwright test",
+    "test:qa2": "cross-env ENV=QA2 playwright test",
+    "test:cloudqa": "cross-env ENV=CLOUDQA playwright test",
+    "test:uat": "cross-env ENV=UAT playwright test",
+    "test:qa-upgrade": "cross-env ENV=QA_UPGRADE playwright test",
+    "test:smoke": "cross-env ENV=QA_UPGRADE playwright test --grep @smoke",
+    "test:regression": "cross-env ENV=QA_UPGRADE playwright test --grep @regression",
+    "test:sanity": "cross-env ENV=QA_UPGRADE playwright test --grep @sanity",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report",
+    "allure:serve": "allure serve allure-results"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.0",
+    "@types/node": "^20.12.12",
+    "allure-commandline": "^2.29.0",
+    "allure-playwright": "^3.0.0-beta.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "rimraf": "^5.0.7",
+    "typescript": "^5.4.5"
+  }
+}

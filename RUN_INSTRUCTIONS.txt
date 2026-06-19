@@ -1,0 +1,199 @@
+================================================================================
+PLAYWRIGHT TEST EXECUTION & SETUP RUNBOOK (WINDOWS / POWERSHELL / BASH)
+================================================================================
+
+This document details all execution commands, parameters, and configuration options.
+
+--------------------------------------------------------------------------------
+1. COMPILING AND RUNNING TESTS LOCALLY
+--------------------------------------------------------------------------------
+
+Verify compilation before execution:
+> npx tsc --noEmit
+
+Clean previous report artifacts:
+> npm run clean
+
+Run tests in HEADLESS mode (Default):
+> npx playwright test
+
+Run tests in HEADED mode:
+> npx playwright test --headed
+
+Run tests on a specific browser (e.g., Chromium):
+> npx playwright test --project=chromium
+
+--------------------------------------------------------------------------------
+2. TESTING ACROSS DIFFERENT ENVIRONMENTS
+--------------------------------------------------------------------------------
+
+The target environment is selected by setting the 'ENV' environment variable.
+Supported options: DEV, DEVAT, QA, QA2, CLOUDQA, UAT, QA_UPGRADE.
+
+Example - Run all tests against DEV:
+> npx cross-env ENV=DEV npx playwright test
+
+Example - Run all tests against QA Upgrade (https://us-qcsup.majesco.io/Claim/):
+> npx cross-env ENV=QA_UPGRADE npx playwright test
+
+Example - Run tests on UAT:
+> npx cross-env ENV=UAT npx playwright test
+
+--------------------------------------------------------------------------------
+3. RUNNING SPECIFIC SUITES / TAGS
+--------------------------------------------------------------------------------
+
+You can target specific test groups using Playwright tags:
+
+Run Smoke Tests (@smoke):
+> npm run test:smoke
+  OR
+> npx cross-env ENV=QA_UPGRADE npx playwright test --grep "@smoke"
+
+Run Regression Tests (@regression):
+> npm run test:regression
+  OR
+> npx cross-env ENV=QA_UPGRADE npx playwright test --grep "@regression"
+
+Run Sanity Tests (@sanity):
+> npm run test:sanity
+  OR
+> npx cross-env ENV=QA_UPGRADE npx playwright test --grep "@sanity"
+
+--------------------------------------------------------------------------------
+4. GENERATING AND VIEWING ALLURE REPORTS
+--------------------------------------------------------------------------------
+
+Allure reports capture test execution status, environment attributes, and screenshots.
+
+Generate the static Allure HTML report:
+> npm run allure:generate
+
+Open the generated Allure report in browser:
+> npm run allure:open
+
+Combine generation and server launch in one command:
+> npm run allure:serve
+
+--------------------------------------------------------------------------------
+5. HOW AND WHERE TO UPDATE COMPONENTS
+--------------------------------------------------------------------------------
+
+- TO UPDATE BASE URLS:
+  Edit "c:\Users\Aerva910894\OneDrive - Majesco\Desktop\Sudheer\Playwright\USIC_Claims_Playwright\playwright.config.ts"
+  Modify the `ENV_URLS` mapping object.
+
+- TO UPDATE OR ADD CREDENTIALS:
+  Edit "c:\Users\Aerva910894\OneDrive - Majesco\Desktop\Sudheer\Playwright\USIC_Claims_Playwright\config\credentials.config.ts"
+  Modify the default credentials within `CREDENTIALS_STORE` object.
+  Alternative (Secure Override): Define OS Environment Variables matching this pattern:
+  [ENV]_[ROLE]_USERNAME  and  [ENV]_[ROLE]_PASSWORD
+  For example, set QA_UPGRADE_ADMIN_USERNAME=my_prod_user and QA_UPGRADE_ADMIN_PASSWORD=my_secret_pass.
+
+- TO UPDATE OR ADD SELECTORS:
+  Edit corresponding JSON locator file under "c:\Users\Aerva910894\OneDrive - Majesco\Desktop\Sudheer\Playwright\USIC_Claims_Playwright\locators/":
+  - login.json
+  - dashboard.json
+  - claims.json
+  Add/modify key-value pairs. Keys are accessed inside Page Object classes.
+
+- TO UPDATE PAGE LOGIC:
+  Modify POM files located in "c:\Users\Aerva910894\OneDrive - Majesco\Desktop\Sudheer\Playwright\USIC_Claims_Playwright\src\pages/".
+
+--------------------------------------------------------------------------------
+6. PLAYWRIGHT CODEGEN (TEST GENERATOR)
+--------------------------------------------------------------------------------
+
+Playwright Codegen allows you to record actions on screen and automatically generate TypeScript code.
+
+- RECORD ON AN ACTIVE BROWSER WINDOW (HEADED CODEGEN):
+  Launches the interactive recording inspector and standard Chrome window:
+  > npx playwright codegen https://us-qcsup.majesco.io/Claim/
+
+- RECORD HEADLESS AND SAVE TO A FILE DIRECTLY:
+  Runs the browser in headless mode while writing your generated actions directly to a spec file:
+  > npx playwright codegen --headless -o src/tests/recorded-test.spec.ts https://us-qcsup.majesco.io/Claim/
+
+- RECORD AND EMULATE A MOBILE VIEWPORT (e.g. iPhone 13):
+  > npx playwright codegen --device="iPhone 13" https://us-qcsup.majesco.io/Claim/
+
+- RECORD IGNORING SSL/HTTPS CERTIFICATE ERRORS:
+  Useful for corporate test environments with invalid or self-signed certificates:
+  > npx playwright codegen --ignore-https-errors https://us-qcsup.majesco.io/Claim/
+
+- RECORD AND PRE-SAVE AUTHENTICATION STATE:
+  1. Record login and save session cookie/state to auth.json:
+     > npx playwright codegen --save-storage=auth.json https://us-qcsup.majesco.io/Claim/
+  2. Perform other actions by loading that saved session state (skips typing credentials next time):
+     > npx playwright codegen --load-storage=auth.json https://us-qcsup.majesco.io/Claim/
+
+--------------------------------------------------------------------------------
+7. ADDITIONAL RUN SCENARIOS & EXAMPLES
+--------------------------------------------------------------------------------
+
+- RUN TESTS HEADED ON A SPECIFIC BROWSER AND ENVIRONMENT:
+  Run QA Upgrade tests in Chrome headed mode:
+  > npx cross-env ENV=QA_UPGRADE npx playwright test --project=chromium --headed
+
+- RUN TESTS IGNORING HTTPS CERTIFICATE ERRORS (CLI OVERRIDE):
+  Note: This is already enabled by default in 'playwright.config.ts' via the `ignoreHTTPSErrors: true` setting.
+  However, you can also enforce it on the command line:
+  > npx cross-env ENV=QA_UPGRADE npx playwright test --ignore-https-errors
+
+- RUN ONLY A SPECIFIC TEST FILE:
+  > npx cross-env ENV=QA_UPGRADE npx playwright test src/tests/login.spec.ts --headed
+
+- RUN WITH DEBUGGER (PLAYWRIGHT INSPECTOR):
+  This opens Playwright's debugger window so you can step through test lines:
+  > npx cross-env ENV=QA_UPGRADE npx playwright test --debug
+
+- OVERRIDE TEST TIMEOUT AT RUNTIME:
+  Runs tests with a custom timeout of 60 seconds (60000ms):
+  > npx cross-env ENV=QA_UPGRADE npx playwright test --timeout=60000
+
+--------------------------------------------------------------------------------
+8. INITIALIZING GIT & PUBLISHING TO GITHUB
+--------------------------------------------------------------------------------
+
+Follow these step-by-step instructions to initialize Git, authenticate to GitHub, and publish this framework to a new repository.
+
+STEP 1: CONFIGURE YOUR LOCAL GIT USER IDENTITY
+If you haven't set up your Git name and email globally, run:
+> git config --global user.name "Your Name"
+> git config --global user.email "your.email@example.com"
+
+STEP 2: INITIALIZE LOCAL REPOSITORY
+> git init
+
+STEP 3: STAGE AND COMMIT YOUR FILES
+Verify that your .gitignore is working (to exclude node_modules, reports, logs) and add files:
+> git add .
+> git commit -m "Initial commit of USIC Claims Playwright Automation Framework"
+
+STEP 4: AUTHENTICATE TO GITHUB
+Since external agents cannot sign in directly due to security and multi-factor authentication (MFA), you must sign in yourself using one of these options:
+
+- OPTION A: USING THE GITHUB CLI (RECOMMENDED & EASIEST)
+  1. If you have the GitHub CLI installed, run:
+     > gh auth login
+  2. Follow the interactive prompts to authenticate via your web browser.
+
+- OPTION B: USING PERSONAL ACCESS TOKENS (PAT)
+  1. Go to GitHub -> Settings -> Developer Settings -> Personal Access Tokens -> Tokens (classic).
+  2. Generate a token with 'repo' scope and copy it.
+  3. Ensure your local git credential helper is active:
+     > git config --global credential.helper manager
+
+STEP 5: CREATE A NEW REPOSITORY ON GITHUB
+- VIA THE GITHUB CLI (FASTEST):
+  > gh repo create USIC_Claims_Playwright --public --source=. --remote=origin --push
+  (This creates the repo and pushes it in one step!)
+
+- VIA THE GITHUB WEB INTERFACE:
+  1. Navigate to https://github.com/new and create a repository named 'USIC_Claims_Playwright'.
+  2. Keep 'Add a README file', 'Add .gitignore', and 'Choose a license' UNCHECKED (since they already exist locally).
+  3. Run the following commands to link your local codebase and push:
+     > git branch -M main
+     > git remote add origin https://github.com/your-username/USIC_Claims_Playwright.git
+     > git push -u origin main
+================================================================================
