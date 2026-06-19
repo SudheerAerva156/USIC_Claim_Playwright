@@ -1,12 +1,14 @@
 import loginLocators from '../../locators/login.json';
 import dashboardLocators from '../../locators/dashboard.json';
 import claimsLocators from '../../locators/claims.json';
+import homeLocators from '../../locators/home.json';
 
 export class LocatorManager {
   private static readonly locatorsMap: Record<string, Record<string, string>> = {
     login: loginLocators as Record<string, string>,
     dashboard: dashboardLocators as Record<string, string>,
-    claims: claimsLocators as Record<string, string>
+    claims: claimsLocators as Record<string, string>,
+    home: homeLocators as Record<string, string>
   };
 
   /**

@@ -2,6 +2,7 @@ import { test as base, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { ClaimsPage } from '../pages/ClaimsPage';
+import { HomePage } from '../pages/HomePage';
 import { ApiUtility } from '../utils/ApiUtility';
 import { Logger } from '../utils/Logger';
 import { EnvironmentManager } from '../utils/EnvironmentManager';
@@ -11,6 +12,7 @@ export interface CustomFixtures {
   loginPage: LoginPage;
   dashboardPage: DashboardPage;
   claimsPage: ClaimsPage;
+  homePage: HomePage;
   apiUtility: ApiUtility;
 }
 
@@ -29,6 +31,11 @@ export const test = base.extend<CustomFixtures>({
   claimsPage: async ({ page }, use) => {
     const claimsPage = new ClaimsPage(page);
     await use(claimsPage);
+  },
+
+  homePage: async ({ page }, use) => {
+    const homePage = new HomePage(page);
+    await use(homePage);
   },
 
   apiUtility: async ({ request }, use) => {
