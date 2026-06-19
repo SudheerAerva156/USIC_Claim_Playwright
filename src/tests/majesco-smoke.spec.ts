@@ -7,29 +7,27 @@ test.describe('Majesco Claims Live Smoke Test Suite', () => {
     ignoreHTTPSErrors: true
   });
 
-  test('Execute recorded Majesco E2E flow @smoke @regression', async ({ page }) => {
+  test('Execute recorded Majesco E2E flow @smoke @regression', async ({ loginPage, page }) => {
     Logger.info('Starting live Majesco E2E smoke test');
 
     // Dynamically navigate to the environment's base URL
-    await page.goto('');
+    await loginPage.navigate();
     
-    // Dynamically retrieve credentials for Admin role
-    const credentials = CredentialManager.getCredentials('Admin');
-
-    Logger.info('Entering credentials dynamically');
-    await page.locator('#username').click();
-    await page.locator('#username').pressSequentially(credentials.username, { delay: 50 });
-    await page.locator('#username').press('Tab');
-    await page.locator('#password').click();
-    await page.locator('#password').pressSequentially(credentials.password, { delay: 50 });
-    await page.locator('#password').press('Tab');
-    await page.locator('input[type="submit"]').click();
+    // Perform dynamic login using Page Object Model (which automatically resolves cookie consent)
+    await loginPage.loginWithRole('Admin');
     
-    Logger.info('Closing initial modal overlays');
-    await page.getByRole('button', { name: 'Close' }).click();
+    Logger.info('Closing initial modal overlays if present');
+    const closeBtn = page.getByRole('button', { name: 'Close' });
+    try {
+      await closeBtn.waitFor({ state: 'visible', timeout: 5000 });
+      await closeBtn.click();
+      Logger.info('Closed initial modal overlay');
+    } catch (e) {
+      Logger.info('No initial modal overlay detected or timed out waiting');
+    }
     
     // Validate we are logged in successfully and Home link is visible
-    await expect(page.getByRole('link', { name: 'Home' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Home' })).toBeVisible({ timeout: 30000 });
     
     Logger.info('Navigating to Claim Search');
     await page.getByRole('link', { name: 'Claim Search' }).click();

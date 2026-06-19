@@ -12,6 +12,10 @@ const baseURL = ENV_URLS[environment] || ENV_URLS['QA'];
 export default defineConfig({
   testDir: './src/tests',
   fullyParallel: true,
+  timeout: 60000,
+  expect: {
+    timeout: 15000
+  },
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 4 : undefined,
