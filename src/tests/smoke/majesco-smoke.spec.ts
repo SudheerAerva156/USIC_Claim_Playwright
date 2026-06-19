@@ -30,9 +30,8 @@ test.describe('Majesco Claims Live Smoke Test Suite', () => {
     await expect(page.getByRole('link', { name: 'Home' })).toBeVisible({ timeout: 30000 });
     
     Logger.info('Waiting for any initial loading overlays to disappear');
-    await page.locator('.overlay, .modal-backdrop').waitFor({ state: 'hidden', timeout: 30000 }).catch(() => {
-      Logger.info('Timed out waiting for loading overlays to disappear, proceeding');
-    });
+    await page.locator('.overlay').first().waitFor({ state: 'hidden', timeout: 30000 }).catch(() => {});
+    await page.locator('.modal-backdrop').first().waitFor({ state: 'hidden', timeout: 30000 }).catch(() => {});
 
     Logger.info('Navigating to Claim Search');
     await page.getByRole('link', { name: 'Claim Search' }).click();

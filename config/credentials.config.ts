@@ -57,7 +57,7 @@ export const CREDENTIALS_STORE: Record<string, Record<UserRole, UserCredentials>
     'Read Only User': { username: 'uat_readonly', password: 'UatPassword123!' }
   },
   QA_UPGRADE: {
-    Admin: { username: 'qaupgrade_admin', password: 'QaUpgradePassword123!' },
+    Admin: { username: 'admin', password: 'adm@usqc6' },
     Supervisor: { username: 'qaupgrade_supervisor', password: 'QaUpgradePassword123!' },
     Manager: { username: 'qaupgrade_manager', password: 'QaUpgradePassword123!' },
     Adjuster: { username: 'qaupgrade_adjuster', password: 'QaUpgradePassword123!' },
