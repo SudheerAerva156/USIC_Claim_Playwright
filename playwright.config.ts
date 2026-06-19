@@ -1,21 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
+import { ENV_URLS } from './config/environments.config';
 
 // Load environment variables from a .env file if it exists
 dotenv.config();
 
 const environment = process.env.ENV || 'QA_UPGRADE';
-
-// Configured base URLs for each environment
-const ENV_URLS: Record<string, string> = {
-  DEV: 'https://dev-claim.majesco.io/Claim/',
-  DEVAT: 'https://devat-claim.majesco.io/Claim/',
-  QA: 'https://qa-claim.majesco.io/Claim/',
-  QA2: 'https://qa2-claim.majesco.io/Claim/',
-  CLOUDQA: 'https://cloudqa-claim.majesco.io/Claim/',
-  UAT: 'https://uat-claim.majesco.io/Claim/',
-  QA_UPGRADE: 'https://us-qcsup.majesco.io/Claim/'
-};
 
 const baseURL = ENV_URLS[environment] || ENV_URLS['QA_UPGRADE'];
 
