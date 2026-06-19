@@ -1,5 +1,5 @@
-import { test } from './fixtures';
-import { Logger } from '../utils/Logger';
+import { test } from '../fixtures';
+import { Logger } from '../../utils/Logger';
 
 test.describe('USIC Claims Dashboard Suite', () => {
   test.beforeEach(async ({ loginPage }) => {

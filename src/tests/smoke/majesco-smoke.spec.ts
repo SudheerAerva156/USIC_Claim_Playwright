@@ -1,6 +1,6 @@
-import { test, expect } from './fixtures';
-import { Logger } from '../utils/Logger';
-import { CredentialManager } from '../utils/CredentialManager';
+import { test, expect } from '../fixtures';
+import { Logger } from '../../utils/Logger';
+import { CredentialManager } from '../../utils/CredentialManager';
 
 test.describe('Majesco Claims Live Smoke Test Suite', () => {
   test.use({
@@ -29,6 +29,11 @@ test.describe('Majesco Claims Live Smoke Test Suite', () => {
     // Validate we are logged in successfully and Home link is visible
     await expect(page.getByRole('link', { name: 'Home' })).toBeVisible({ timeout: 30000 });
     
+    Logger.info('Waiting for any initial loading overlays to disappear');
+    await page.locator('.overlay, .modal-backdrop').waitFor({ state: 'hidden', timeout: 30000 }).catch(() => {
+      Logger.info('Timed out waiting for loading overlays to disappear, proceeding');
+    });
+
     Logger.info('Navigating to Claim Search');
     await page.getByRole('link', { name: 'Claim Search' }).click();
     await page.getByRole('link', { name: 'Claim Search', exact: true }).click();

@@ -40,25 +40,35 @@ Example - Run tests on UAT:
 > npx cross-env ENV=UAT npx playwright test
 
 --------------------------------------------------------------------------------
-3. RUNNING SPECIFIC SUITES / TAGS
+3. RUNNING SPECIFIC SUITES / FOLDERS
 --------------------------------------------------------------------------------
 
-You can target specific test groups using Playwright tags:
+You can target specific test groups by folder or tag:
 
-Run Smoke Tests (@smoke):
+Run Smoke Tests (smoke folder):
 > npm run test:smoke
   OR
-> npx cross-env ENV=QA_UPGRADE npx playwright test --grep "@smoke"
+> npx cross-env ENV=QA_UPGRADE npx playwright test src/tests/smoke/
 
-Run Regression Tests (@regression):
+Run Regression Tests (regression folder + upgrade folder):
 > npm run test:regression
   OR
-> npx cross-env ENV=QA_UPGRADE npx playwright test --grep "@regression"
+> npx cross-env ENV=QA_UPGRADE npx playwright test src/tests/regression/ src/tests/upgrade/
 
-Run Sanity Tests (@sanity):
-> npm run test:sanity
+Run All Upgrade Tests (upgrade folder):
+> npm run test:upgrade
   OR
-> npx cross-env ENV=QA_UPGRADE npx playwright test --grep "@sanity"
+> npx cross-env ENV=QA_UPGRADE npx playwright test src/tests/upgrade/
+
+Run Base Capabilities Upgrade Tests:
+> npm run test:upgrade:capabilities
+  OR
+> npx cross-env ENV=QA_UPGRADE npx playwright test src/tests/upgrade/base-capabilities.spec.ts
+
+Run Base Defects Upgrade Tests:
+> npm run test:upgrade:defects
+  OR
+> npx cross-env ENV=QA_UPGRADE npx playwright test src/tests/upgrade/base-defects.spec.ts
 
 --------------------------------------------------------------------------------
 4. GENERATING AND VIEWING ALLURE REPORTS
