@@ -30,7 +30,7 @@ test.describe('Majesco Claims Live Smoke Test Suite', () => {
     await expect(page.getByRole('link', { name: 'Home' })).toBeVisible({ timeout: 30000 });
     
     Logger.info('Navigating to Claim Search');
-    await page.getByRole('link', { name: 'Claim Search' }).click();
+    await page.getByRole('link', { name: 'Claim Search' }).click();
     await page.getByRole('link', { name: 'Claim Search', exact: true }).click();
     
     Logger.info('Selecting Claim Status: Open');
@@ -55,11 +55,11 @@ test.describe('Majesco Claims Live Smoke Test Suite', () => {
     await page.getByRole('tab', { name: 'mm.icd.FNOLSummary.Features' }).click();
     
     Logger.info('Verifying Vendor Management navigation');
-    await page.getByRole('link', { name: 'Vendor' }).click();
+    await page.getByRole('link', { name: 'Vendor' }).click();
     await page.getByRole('link', { name: 'Vendor Management' }).click();
     
     Logger.info('Verifying Special Functions and Out of Office routing');
-    await page.getByRole('link', { name: 'Special Functions' }).click();
+    await page.getByRole('link', { name: 'Special Functions' }).click();
     await page.getByRole('link', { name: 'Out Of Office' }).click();
     
     Logger.info('Majesco E2E smoke test completed successfully');
